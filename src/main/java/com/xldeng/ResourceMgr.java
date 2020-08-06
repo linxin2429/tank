@@ -10,18 +10,24 @@ import java.util.Objects;
  * @since 2020/8/6 17:46
  */
 public class ResourceMgr {
-    public static BufferedImage tankUp, tankDown, tankLeft, tankRight;
+    public static BufferedImage goodTankUp, goodTankDown, goodTankLeft, goodTankRight;
+    public static BufferedImage badTankUp, badTankDown, badTankLeft, badTankRight;
     public static BufferedImage bulletUp, bulletDown, bulletLeft, bulletRight;
     public static BufferedImage[] explodes = new BufferedImage[16];
 
     static {
         try {
-            tankUp = ImageIO.read(Objects.requireNonNull(ResourceMgr.class.getClassLoader().getResourceAsStream(
+            goodTankUp = ImageIO.read(Objects.requireNonNull(ResourceMgr.class.getClassLoader().getResourceAsStream(
                     "images/GoodTank1.png")));
-            tankDown = ImageUtils.rotateImage(tankUp, 180);
-            tankLeft = ImageUtils.rotateImage(tankUp, -90);
-            tankRight = ImageUtils.rotateImage(tankUp, 90);
+            goodTankDown = ImageUtils.rotateImage(goodTankUp, 180);
+            goodTankLeft = ImageUtils.rotateImage(goodTankUp, -90);
+            goodTankRight = ImageUtils.rotateImage(goodTankUp, 90);
 
+            badTankUp = ImageIO.read(Objects.requireNonNull(ResourceMgr.class.getClassLoader().getResourceAsStream(
+                    "images/BadTank1.png")));
+            badTankDown = ImageUtils.rotateImage(badTankUp, 180);
+            badTankLeft = ImageUtils.rotateImage(badTankUp, -90);
+            badTankRight = ImageUtils.rotateImage(badTankUp, 90);
 
             bulletUp = ImageIO.read(Objects.requireNonNull(ResourceMgr.class.getClassLoader().getResourceAsStream(
                     "images/bulletU.png")));

@@ -108,6 +108,9 @@ public class Bullet {
         if (bulletRect.intersects(tankRect)){
             tank.die();
             this.die();
+            Integer explodeX =tank.getX() + (Tank.WIDTH >> 1) -(Explode.WIDTH >> 1);
+            Integer explodeY =tank.getY() + (Tank.HEIGHT >> 1) -(Explode.HEIGHT >> 1);
+            tankFrame.explodes.add(new Explode(explodeX,explodeY,tankFrame));
         }
     }
 

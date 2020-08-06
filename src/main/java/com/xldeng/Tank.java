@@ -9,13 +9,13 @@ import java.util.Random;
  * @since 2020/8/6 14:10
  */
 public class Tank {
+    /** 坦克宽度和高度 **/
+    public static final Integer WIDTH = ResourceMgr.goodTankUp.getWidth();
+    public static final Integer HEIGHT = ResourceMgr.goodTankUp.getHeight();
     /** 坦克速度 **/
-    private static final Integer SPEED = 5;
+    private static final Integer SPEED = 10;
     /** 坦克位置 **/
     private Integer x, y;
-    /** 坦克宽度和高度 **/
-    public static final Integer WIDTH = ResourceMgr.tankUp.getWidth();
-    public static final Integer HEIGHT =ResourceMgr.tankUp.getHeight();
     /** 坦克方向 **/
     private Dir dir = Dir.DOWN;
     /** 是否移动 **/
@@ -28,7 +28,7 @@ public class Tank {
     private Group group = Group.BAD;
     private TankFrame tankFrame;
 
-    public Tank(Integer x, Integer y, Dir dir,Group group, TankFrame tankFrame) {
+    public Tank(Integer x, Integer y, Dir dir, Group group, TankFrame tankFrame) {
         this.x = x;
         this.y = y;
         this.dir = dir;
@@ -37,27 +37,27 @@ public class Tank {
     }
 
     public void paint(Graphics g) {
-        if (!live){
+        if (!live) {
             tankFrame.tanks.remove(this);
         }
         BufferedImage tankImage = null;
-        switch (dir){
+        switch (dir) {
             case RIGHT:
-                tankImage = ResourceMgr.tankRight;
+                tankImage = this.group == Group.GOOD ? ResourceMgr.goodTankRight : ResourceMgr.badTankRight;
                 break;
             case LEFT:
-                tankImage = ResourceMgr.tankLeft;
+                tankImage = this.group == Group.GOOD ? ResourceMgr.goodTankLeft : ResourceMgr.badTankLeft;
                 break;
             case UP:
-                tankImage = ResourceMgr.tankUp;
+                tankImage = this.group == Group.GOOD ? ResourceMgr.goodTankUp : ResourceMgr.badTankUp;
                 break;
             case DOWN:
-                tankImage = ResourceMgr.tankDown;
+                tankImage = this.group == Group.GOOD ? ResourceMgr.goodTankDown : ResourceMgr.badTankDown;
                 break;
             default:
                 break;
         }
-        g.drawImage(tankImage,x,y,null);
+        g.drawImage(tankImage, x, y, null);
         move();
     }
 
@@ -81,9 +81,28 @@ public class Tank {
             default:
                 break;
         }
-        if (group == Group.BAD && random.nextInt(10) > 8) {
+        if (group == Group.BAD && random.nextInt(100) > 95) {
             this.fire();
         }
+
+        if (group == Group.BAD && random.nextInt(100) > 95) {
+            this.randomDir();
+        }
+
+        boundCheck();
+    }
+
+    private void boundCheck() {
+        if (this.x < 0){
+            this.x = 0;
+        }else if (this.x > TankFrame.GAME_WIDTH - Tank.WIDTH){
+            this.x = TankFrame.GAME_WIDTH - Tank.WIDTH;
+        }else if (this.y < Tank.HEIGHT){
+            this.y = Tank.HEIGHT;
+        }else if (this.y > TankFrame.GAME_HEIGHT - Tank.HEIGHT){
+            this.y = TankFrame.GAME_HEIGHT - Tank.HEIGHT;
+        }
+
     }
 
     public Dir getDir() {
@@ -122,20 +141,24 @@ public class Tank {
     public void setMoving(boolean moving) {
         this.moving = moving;
     }
+
     /**
      * @Description: 坦克开火
      * @Author: xldeng
      * @Date: 2020/8/6 18:41
-
      * @return: void
      **/
     public void fire() {
-        Integer bulletx =x + (WIDTH >> 1) -(Bullet.WIDTH >> 1);
-        Integer bullety =y + (HEIGHT >> 1) -(Bullet.HEIGHT >> 1);
-        tankFrame.bullets.add(new Bullet(bulletx,bullety,dir,this.group, this.tankFrame));
+        Integer bulletx = x + (WIDTH >> 1) - (Bullet.WIDTH >> 1);
+        Integer bullety = y + (HEIGHT >> 1) - (Bullet.HEIGHT >> 1);
+        tankFrame.bullets.add(new Bullet(bulletx, bullety, dir, this.group, this.tankFrame));
     }
 
     public void die() {
         live = false;
+    }
+
+    private void randomDir() {
+        dir = Dir.values()[random.nextInt(4)];
     }
 }
