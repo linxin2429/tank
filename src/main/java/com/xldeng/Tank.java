@@ -2,6 +2,7 @@ package com.xldeng;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Random;
 
 /**
  * @author 邓鑫林
@@ -18,16 +19,20 @@ public class Tank {
     /** 坦克方向 **/
     private Dir dir = Dir.DOWN;
     /** 是否移动 **/
-    private boolean moving = false;
+    private boolean moving = true;
     /** 坦克存活 **/
     private boolean live = true;
 
+    private Random random = new Random();
+
+    private Group group = Group.BAD;
     private TankFrame tankFrame;
 
-    public Tank(Integer x, Integer y, Dir dir,TankFrame tankFrame) {
+    public Tank(Integer x, Integer y, Dir dir,Group group, TankFrame tankFrame) {
         this.x = x;
         this.y = y;
         this.dir = dir;
+        this.group = group;
         this.tankFrame = tankFrame;
     }
 
@@ -76,6 +81,9 @@ public class Tank {
             default:
                 break;
         }
+        if (group == Group.BAD && random.nextInt(10) > 8) {
+            this.fire();
+        }
     }
 
     public Dir getDir() {
@@ -103,6 +111,14 @@ public class Tank {
         this.y = y;
     }
 
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
+    }
+
     public void setMoving(boolean moving) {
         this.moving = moving;
     }
@@ -116,7 +132,7 @@ public class Tank {
     public void fire() {
         Integer bulletx =x + (WIDTH >> 1) -(Bullet.WIDTH >> 1);
         Integer bullety =y + (HEIGHT >> 1) -(Bullet.HEIGHT >> 1);
-        tankFrame.bullets.add(new Bullet(bulletx,bullety,dir,this.tankFrame));
+        tankFrame.bullets.add(new Bullet(bulletx,bullety,dir,this.group, this.tankFrame));
     }
 
     public void die() {

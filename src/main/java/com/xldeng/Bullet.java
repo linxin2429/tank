@@ -20,12 +20,14 @@ public class Bullet {
     /** 子弹存活 **/
     private boolean live = true;
 
+    private Group group = Group.BAD;
     private TankFrame tankFrame;
 
-    public Bullet(Integer x, Integer y, Dir dir,TankFrame tankFrame) {
+    public Bullet(Integer x, Integer y, Dir dir,Group group, TankFrame tankFrame) {
         this.x = x;
         this.y = y;
         this.dir = dir;
+        this.group = group;
         this.tankFrame = tankFrame;
     }
     /**
@@ -95,17 +97,29 @@ public class Bullet {
      * @param tank:
      * @return: boolean
      **/
-    public boolean collideWith(Tank tank) {
+    public void collideWith(Tank tank) {
+        if (this.group == tank.getGroup()){
+            return;
+        }
+
+        //TODO: 每颗子弹和坦克分别用一个Rectangle记录
         Rectangle bulletRect = new Rectangle(x,y,WIDTH,HEIGHT);
         Rectangle tankRect = new Rectangle(tank.getX(),tank.getY(),Tank.WIDTH,Tank.HEIGHT);
         if (bulletRect.intersects(tankRect)){
             tank.die();
             this.die();
         }
-        return false;
     }
 
     private void die() {
         live = false;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
     }
 }

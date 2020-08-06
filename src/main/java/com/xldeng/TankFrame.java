@@ -16,7 +16,7 @@ public class TankFrame extends Frame {
     /** 游戏界面 **/
     public static final Integer GAME_WIDTH = 800, GAME_HEIGHT = 600;
     /** 我方坦克 **/
-    Tank myTank = new Tank(200, 200, Dir.DOWN, this);
+    Tank myTank = new Tank(200, 200, Dir.DOWN,Group.GOOD, this);
     /** 敌方坦克 **/
     List<Tank> tanks = new ArrayList<>();
     /** 炮弹 **/
@@ -62,6 +62,7 @@ public class TankFrame extends Frame {
         for (int i = 0; i < bullets.size(); i++) {
             for (int j = 0; j < tanks.size(); j++) {
                 bullets.get(i).collideWith(tanks.get(j));
+//                bullets.get(i).collideWith(myTank);
             }
         }
     }
