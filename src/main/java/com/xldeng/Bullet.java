@@ -16,12 +16,14 @@ public class Bullet {
     /** 子弹位置 **/
     private Integer x, y;
     /** 子弹方向 **/
-    private Dir dir;
+    private final Dir dir;
     /** 子弹存活 **/
     private boolean live = true;
+    /** 碰撞检测矩形 **/
+    private final Rectangle bulletRect;
 
-    private Group group = Group.BAD;
-    private TankFrame tankFrame;
+    private Group group;
+    private final TankFrame tankFrame;
 
     public Bullet(Integer x, Integer y, Dir dir,Group group, TankFrame tankFrame) {
         this.x = x;
@@ -29,6 +31,8 @@ public class Bullet {
         this.dir = dir;
         this.group = group;
         this.tankFrame = tankFrame;
+
+        bulletRect = new Rectangle(x,y,WIDTH,HEIGHT);
     }
     /**
      * @Description: 绘制子弹
@@ -89,6 +93,10 @@ public class Bullet {
         if (x < 0 || x > TankFrame.GAME_WIDTH || y < 0 || y > TankFrame.GAME_HEIGHT){
             live = false;
         }
+
+        //update bulletRect
+        bulletRect.x = x;
+        bulletRect.y = y;
     }
     /**
      * @Description: 子弹和坦克碰撞检测
@@ -101,11 +109,7 @@ public class Bullet {
         if (this.group == tank.getGroup()){
             return;
         }
-
-        //TODO: 每颗子弹和坦克分别用一个Rectangle记录
-        Rectangle bulletRect = new Rectangle(x,y,WIDTH,HEIGHT);
-        Rectangle tankRect = new Rectangle(tank.getX(),tank.getY(),Tank.WIDTH,Tank.HEIGHT);
-        if (bulletRect.intersects(tankRect)){
+        if (bulletRect.intersects(tank.getTankRect())){
             tank.die();
             this.die();
             Integer explodeX =tank.getX() + (Tank.WIDTH >> 1) -(Explode.WIDTH >> 1);

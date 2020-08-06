@@ -22,6 +22,8 @@ public class Tank {
     private boolean moving = true;
     /** 坦克存活 **/
     private boolean live = true;
+    /** 碰撞检测矩形 **/
+    private Rectangle tankRect;
 
     private Random random = new Random();
 
@@ -34,6 +36,7 @@ public class Tank {
         this.dir = dir;
         this.group = group;
         this.tankFrame = tankFrame;
+        tankRect = new Rectangle(x,y,WIDTH,HEIGHT);
     }
 
     public void paint(Graphics g) {
@@ -90,6 +93,8 @@ public class Tank {
         }
 
         boundCheck();
+        tankRect.x = x;
+        tankRect.y = y;
     }
 
     private void boundCheck() {
@@ -113,6 +118,13 @@ public class Tank {
         this.dir = dir;
     }
 
+    public Rectangle getTankRect() {
+        return tankRect;
+    }
+
+    public void setTankRect(Rectangle tankRect) {
+        this.tankRect = tankRect;
+    }
 
     public Integer getX() {
         return x;

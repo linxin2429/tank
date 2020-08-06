@@ -12,12 +12,13 @@ public class Explode {
     public static final Integer WIDTH = ResourceMgr.explodes[0].getWidth();
     public static final Integer HEIGHT =ResourceMgr.explodes[0].getHeight();
     /** 爆炸位置 **/
-    private Integer x, y;
+    private final Integer x;
+    private final Integer y;
 
     private Integer step = 0;
 
 
-    private TankFrame tankFrame = null;
+    private final TankFrame tankFrame;
 
     public Explode(Integer x, Integer y, TankFrame tankFrame) {
         this.x = x;
