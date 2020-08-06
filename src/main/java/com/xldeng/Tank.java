@@ -1,6 +1,7 @@
 package com.xldeng;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /**
  * @author 邓鑫林
@@ -8,22 +9,50 @@ import java.awt.*;
  */
 public class Tank {
     /** 坦克速度 **/
-    private static final Integer SPEED = 10;
+    private static final Integer SPEED = 5;
     /** 坦克位置 **/
     private Integer x, y;
+    /** 坦克宽度和高度 **/
+    public static final Integer WIDTH = ResourceMgr.tankUp.getWidth();
+    public static final Integer HEIGHT =ResourceMgr.tankUp.getHeight();
     /** 坦克方向 **/
     private Dir dir = Dir.DOWN;
     /** 是否移动 **/
     private boolean moving = false;
+    /** 坦克存活 **/
+    private boolean live = true;
 
-    public Tank(Integer x, Integer y, Dir dir) {
+    private TankFrame tankFrame;
+
+    public Tank(Integer x, Integer y, Dir dir,TankFrame tankFrame) {
         this.x = x;
         this.y = y;
         this.dir = dir;
+        this.tankFrame = tankFrame;
     }
 
     public void paint(Graphics g) {
-        g.fillRect(x, y, 50, 50);
+        if (!live){
+            tankFrame.tanks.remove(this);
+        }
+        BufferedImage tankImage = null;
+        switch (dir){
+            case RIGHT:
+                tankImage = ResourceMgr.tankRight;
+                break;
+            case LEFT:
+                tankImage = ResourceMgr.tankLeft;
+                break;
+            case UP:
+                tankImage = ResourceMgr.tankUp;
+                break;
+            case DOWN:
+                tankImage = ResourceMgr.tankDown;
+                break;
+            default:
+                break;
+        }
+        g.drawImage(tankImage,x,y,null);
         move();
     }
 
@@ -56,11 +85,41 @@ public class Tank {
     public void setDir(Dir dir) {
         this.dir = dir;
     }
-    public boolean isMoving() {
-        return moving;
+
+
+    public Integer getX() {
+        return x;
+    }
+
+    public void setX(Integer x) {
+        this.x = x;
+    }
+
+    public Integer getY() {
+        return y;
+    }
+
+    public void setY(Integer y) {
+        this.y = y;
     }
 
     public void setMoving(boolean moving) {
         this.moving = moving;
+    }
+    /**
+     * @Description: 坦克开火
+     * @Author: xldeng
+     * @Date: 2020/8/6 18:41
+
+     * @return: void
+     **/
+    public void fire() {
+        Integer bulletx =x + (WIDTH >> 1) -(Bullet.WIDTH >> 1);
+        Integer bullety =y + (HEIGHT >> 1) -(Bullet.HEIGHT >> 1);
+        tankFrame.bullets.add(new Bullet(bulletx,bullety,dir,this.tankFrame));
+    }
+
+    public void die() {
+        live = false;
     }
 }

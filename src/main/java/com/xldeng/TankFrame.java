@@ -5,16 +5,28 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author 邓鑫林
  * @since 2020/8/5 23:46
  */
 public class TankFrame extends Frame {
-    Tank myTank = new Tank(200, 200, Dir.DOWN);
+    /** 游戏界面 **/
+    public static final Integer GAME_WIDTH = 800, GAME_HEIGHT = 600;
+    /** 我方坦克 **/
+    Tank myTank = new Tank(200, 200, Dir.DOWN, this);
+    /** 敌方坦克 **/
+    List<Tank> tanks = new ArrayList<>();
+    /** 炮弹 **/
+    List<Bullet> bullets = new ArrayList<>();
+
+
+    Image offScreenImage = null;
 
     public TankFrame() {
-        setSize(800, 600);
+        setSize(GAME_WIDTH, GAME_HEIGHT);
         setResizable(false);
         setTitle("Tank War");
         setVisible(true);
@@ -29,8 +41,44 @@ public class TankFrame extends Frame {
 
     @Override
     public void paint(Graphics g) {
-        myTank.paint(g);
 
+        Color color = g.getColor();
+        g.setColor(Color.WHITE);
+        g.drawString("敌方坦克数量："+ tanks.size(),10,60);
+        g.drawString("子弹数量："+ bullets.size(),10,80);
+
+
+        myTank.paint(g);
+        for (int i = 0; i < bullets.size(); i++) {
+            bullets.get(i).paint(g);
+        }
+        for (int i = 0; i < tanks.size(); i++) {
+            tanks.get(i).paint(g);
+        }
+//        for (Bullet bullet : bullets) {
+//            bullet.paint(g);
+//        }
+
+        for (int i = 0; i < bullets.size(); i++) {
+            for (int j = 0; j < tanks.size(); j++) {
+                bullets.get(i).collideWith(tanks.get(j));
+            }
+        }
+    }
+
+    //解决闪烁问题
+    @Override
+    public void update(Graphics g) {
+        if (offScreenImage == null) {
+            offScreenImage = this.createImage(GAME_WIDTH, GAME_HEIGHT);
+        }
+        Graphics gOffScreen = offScreenImage.getGraphics();
+        Color color = gOffScreen.getColor();
+        gOffScreen.setColor(Color.BLACK);
+        gOffScreen.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+        gOffScreen.setColor(color);
+        paint(gOffScreen);
+        g.drawImage(offScreenImage, 0, 0, null);
     }
 
     /**
@@ -61,6 +109,7 @@ public class TankFrame extends Frame {
                 case KeyEvent.VK_RIGHT:
                     right = true;
                     break;
+
                 default:
                     break;
             }
@@ -82,6 +131,9 @@ public class TankFrame extends Frame {
                     break;
                 case KeyEvent.VK_RIGHT:
                     right = false;
+                    break;
+                case KeyEvent.VK_CONTROL:
+                    myTank.fire();
                     break;
                 default:
                     break;
