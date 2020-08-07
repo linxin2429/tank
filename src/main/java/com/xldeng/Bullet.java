@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
  */
 public class Bullet {
     /** 子弹速度 **/
-    private static final Integer SPEED = 10;
+    private static final Integer SPEED = PropertyMgr.getInt("bulletSpeed");
     /** 子弹大小 **/
     public static final Integer WIDTH = ResourceMgr.bulletUp.getWidth();
     public static final Integer HEIGHT =ResourceMgr.bulletUp.getHeight();
@@ -31,8 +31,9 @@ public class Bullet {
         this.dir = dir;
         this.group = group;
         this.tankFrame = tankFrame;
-
         bulletRect = new Rectangle(x,y,WIDTH,HEIGHT);
+
+        tankFrame.bullets.add(this);
     }
     /**
      * @Description: 绘制子弹

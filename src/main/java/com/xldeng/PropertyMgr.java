@@ -1,6 +1,7 @@
 package com.xldeng;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Properties;
 
 /**
@@ -34,5 +35,15 @@ public class PropertyMgr {
 
     public static Integer getInt(String key){
         return Integer.parseInt(getString(key));
+    }
+
+    public static <T> T getInstance(String key,Class<T> clazz){
+        T instance = null;
+        try {
+            instance = (T) Class.forName(getString(key)).newInstance();
+        } catch (InstantiationException | ClassNotFoundException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return instance;
     }
 }

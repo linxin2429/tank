@@ -13,7 +13,7 @@ public class Tank {
     public static final Integer WIDTH = ResourceMgr.goodTankUp.getWidth();
     public static final Integer HEIGHT = ResourceMgr.goodTankUp.getHeight();
     /** 坦克速度 **/
-    private static final Integer SPEED = 10;
+    private static final Integer SPEED = PropertyMgr.getInt("tankSpeed");
     /** 坦克位置 **/
     private Integer x, y;
     /** 坦克方向 **/
@@ -30,13 +30,23 @@ public class Tank {
     private Group group = Group.BAD;
     private TankFrame tankFrame;
 
+    private FireStrategy fireStrategy;
+
     public Tank(Integer x, Integer y, Dir dir, Group group, TankFrame tankFrame) {
         this.x = x;
         this.y = y;
         this.dir = dir;
         this.group = group;
         this.tankFrame = tankFrame;
-        tankRect = new Rectangle(x,y,WIDTH,HEIGHT);
+        tankRect = new Rectangle(x, y, WIDTH, HEIGHT);
+
+
+        if (this.group == Group.GOOD) {
+            fireStrategy = PropertyMgr.getInstance("goodTankFireStrategy", FireStrategy.class);
+        } else {
+            fireStrategy = PropertyMgr.getInstance("badTankFireStrategy", FireStrategy.class);
+        }
+
     }
 
     public void paint(Graphics g) {
@@ -98,13 +108,13 @@ public class Tank {
     }
 
     private void boundCheck() {
-        if (this.x < 0){
+        if (this.x < 0) {
             this.x = 0;
-        }else if (this.x > TankFrame.GAME_WIDTH - Tank.WIDTH){
+        } else if (this.x > TankFrame.GAME_WIDTH - Tank.WIDTH) {
             this.x = TankFrame.GAME_WIDTH - Tank.WIDTH;
-        }else if (this.y < Tank.HEIGHT){
+        } else if (this.y < Tank.HEIGHT) {
             this.y = Tank.HEIGHT;
-        }else if (this.y > TankFrame.GAME_HEIGHT - Tank.HEIGHT){
+        } else if (this.y > TankFrame.GAME_HEIGHT - Tank.HEIGHT) {
             this.y = TankFrame.GAME_HEIGHT - Tank.HEIGHT;
         }
 
@@ -154,6 +164,14 @@ public class Tank {
         this.moving = moving;
     }
 
+    public TankFrame getTankFrame() {
+        return tankFrame;
+    }
+
+    public void setTankFrame(TankFrame tankFrame) {
+        this.tankFrame = tankFrame;
+    }
+
     /**
      * @Description: 坦克开火
      * @Author: xldeng
@@ -161,9 +179,7 @@ public class Tank {
      * @return: void
      **/
     public void fire() {
-        Integer bulletx = x + (WIDTH >> 1) - (Bullet.WIDTH >> 1);
-        Integer bullety = y + (HEIGHT >> 1) - (Bullet.HEIGHT >> 1);
-        tankFrame.bullets.add(new Bullet(bulletx, bullety, dir, this.group, this.tankFrame));
+        fireStrategy.fire(this);
     }
 
     public void die() {
